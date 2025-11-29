@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Eror Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .error-code {
+            font-size: 10em;
+            font-weight: bold;
+            text-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+            animation: glitch 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        .message {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .oop-joke {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px auto;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+
+        .characters {
+            position: absolute;
+            font-size: 4em;
+        }
+
+        .char1 { top: 10%; left: 10%; animation: float 3s ease-in-out infinite; }
+        .char2 { top: 20%; right: 15%; animation: float 3.5s ease-in-out infinite; }
+        .char3 { bottom: 15%; left: 20%; animation: spin 4s linear infinite; }
+        .char4 { bottom: 20%; right: 10%; animation: bounce 2s infinite; }
+        .char5 { top: 50%; left: 5%; animation: shake 2s infinite; }
+        .char6 { top: 60%; right: 5%; animation: wiggle 2s infinite; }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #ffd700;
+            color: #333;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: scale(1.1) rotate(-5deg);
+            background: #ffed4e;
+        }
+
+        .code-snippet {
+            background: #2d2d2d;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px auto;
+            max-width: 400px;
+            text-align: left;
+            font-size: 0.9em;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            background: white;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 0.4em;
+            max-width: 200px;
+            animation: fadeInOut 3s infinite;
+        }
+
+        .bubble1 { top: 15%; left: 15%; animation-delay: 0s; }
+        .bubble2 { bottom: 25%; right: 15%; animation-delay: 1s; }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .error-code { font-size: 6em; }certificate_domain
+            .title { font-size: 1.8em; }
+            .characters { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="characters char1">🤖</div>
+    <div class="characters char2">👾</div>
+    <div class="characters char3">🎮</div>
+    <div class="characters char4">💾</div>
+    <div class="characters char5">🖥️</div>
+    <div class="characters char6">🔧</div>
+
+    <div class="speech-bubble bubble1">Where is my class?! 😱</div>
+    <div class="speech-bubble bubble2">NullPointerException! 🚨</div>
+
+    <div class="container">
+        <div class="error-code">404</div>
+        <div class="title">🎭 Error Page 🎭</div>
+        <div class="message">
+            Oops! Trang này đã bị <strong>Encapsulated</strong> quá kỹ!<br>
+            Chúng tôi không thể <strong>Inherit</strong> được nội dung này! 😅
+        </div>
+
+        <div class="oop-joke">
+            <h3>💡 Câu Đùa OOP Của Ngày:</h3>
+            <p>"Tại sao lập trình viên OOP không thể tìm thấy trang web?"</p>
+            <p><strong>Vì nó bị Private! 🔒</strong></p>
+        </div>
+
+        <div class="code-snippet">
+            <div>class Page404 {</div>
+            <div>&nbsp;&nbsp;constructor() {</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;this.found = false;</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;this.error = "Page not found!";</div>
+            <div>&nbsp;&nbsp;}</div>
+            <div>}</div>
+        </div>
+
+        <div class="oop-joke">
+            <p>🤔 <strong>Exception Thrown:</strong></p>
+            <p>"PageNotFoundException: Trang web đã override về vũ trụ song song!"</p>
+        </div>
+
+        <a href="/index.html" class="btn">🏠 Home</a>
+    </div>
+
+    <script>
+        // Tạo thêm emoji bay ngẫu nhiên
+        function createFloatingEmoji() {
+            const emojis = ['🐛', '⚡', '💻', '🚀', '🎯', '🔥', '⭐', '💡'];
+            const emoji = document.createElement('div');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.position = 'fixed';
+            emoji.style.fontSize = '2em';
+            emoji.style.left = Math.random() * 100 + '%';
+            emoji.style.top = '100%';
+            emoji.style.opacity = '0.7';
+            emoji.style.transition = 'all 4s ease-in';
+            emoji.style.zIndex = '1';
+            document.body.appendChild(emoji);
+
+            setTimeout(() => {
+                emoji.style.top = '-10%';
+                emoji.style.transform = 'rotate(360deg)';
+            }, 100);
+
+            setTimeout(() => {
+                emoji.remove();
+            }, 4000);
+        }
+
+        setInterval(createFloatingEmoji, 1500);
+
+        // Thay đổi joke mỗi 5 giây
+        const jokes = [
+            {
+                q: "Tại sao class không bao giờ cô đơn?",
+                a: "Vì nó luôn có Object! 🎪"
+            },
+            {
+                q: "Con gì mà Polymorphism nhất?",
+                a: "Con... structor! 🏗️"
+            },
+            {
+                q: "Tại sao lập trình viên OOP thích cafe?",
+                a: "Vì họ cần Instance mỗi sáng! ☕"
+            }
+        ];
+
+        let jokeIndex = 0;
+        setInterval(() => {
+            jokeIndex = (jokeIndex + 1) % jokes.length;
+            const jokeElement = document.querySelector('.oop-joke:first-of-type');
+            jokeElement.style.animation = 'fadeIn 0.5s';
+            jokeElement.innerHTML = `
+                <h3>💡 Câu Đùa OOP Của Ngày:</h3>
+                <p>"${jokes[jokeIndex].q}"</p>
+                <p><strong>${jokes[jokeIndex].a}</strong></p>
+            `;
+        }, 5000);
+    </script>
+</body>
+</html>
