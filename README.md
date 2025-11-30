@@ -1,24 +1,54 @@
-# LuckyDraw Infrastructure - AWS S3 + CloudFront
+# 🚀 Terraform Module: Deploy Static Website to AWS S3 + CloudFront with SSL Certificate
 
-Dự án này triển khai một static website lên AWS S3 với CloudFront distribution sử dụng **Terraform Module** pattern.
+[![Terraform](https://img.shields.io/badge/terraform-1.0+-blue.svg)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-S3%20%7C%20CloudFront-orange.svg)](https://aws.amazon.com/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## 🏗️ Kiến trúc
+> **Terraform module để deploy static website lên AWS S3 với CloudFront CDN, SSL certificate tự động, và custom domain. Hướng dẫn chi tiết Infrastructure as Code (IaC) cho AWS.**
 
-### Sơ đồ kiến trúc
+## 📖 Mô tả / Description
+
+**Tiếng Việt**: Module Terraform để tự động hóa việc triển khai static website lên AWS S3 kết hợp CloudFront CDN, tự động tìm/ tạo SSL certificate từ ACM, và cấu hình custom domain. Hỗ trợ S3 static website hosting endpoint, cache behaviors tối ưu, và lifecycle management.
+
+**English**: Terraform module to automate deployment of static websites to AWS S3 with CloudFront CDN, automatic SSL certificate management from ACM, and custom domain configuration. Supports S3 static website hosting endpoint, optimized cache behaviors, and lifecycle management.
+
+## ✨ Tính năng chính / Key Features
+
+- ✅ **S3 Static Website Hosting**: Tự động cấu hình S3 bucket với static website hosting
+- ✅ **CloudFront CDN**: Phân phối nội dung toàn cầu với tốc độ cao
+- ✅ **SSL Certificate Management**: Tự động tìm hoặc tạo ACM certificate (us-east-1)
+- ✅ **Custom Domain Support**: Hỗ trợ custom domain với aliases
+- ✅ **Optimized Cache**: Cache behaviors tối ưu cho static website
+- ✅ **Terraform Module Pattern**: Dễ tái sử dụng và maintain
+- ✅ **Infrastructure as Code**: Quản lý infrastructure bằng code
+- ✅ **Cost Optimized**: PriceClass_100 cho chi phí tối ưu
+
+## 🎯 Use Cases / Trường hợp sử dụng
+
+- Deploy static website (React, Vue, Angular, HTML/CSS/JS)
+- Host documentation sites
+- Deploy landing pages
+- CDN cho static assets
+- Blog sites (Jekyll, Hugo, Gatsby)
+- Portfolio websites
+
+## 🏗️ Architecture / Kiến trúc
+
+### Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         INTERNET USERS                           │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-                             │ HTTPS (www.tigerz2h.click)
+                             │ HTTPS (Custom Domain)
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    CLOUDFRONT DISTRIBUTION                       │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Domain: www.tigerz2h.click, *.tigerz2h.click            │  │
-│  │  SSL Certificate: ACM (us-east-1)                          │  │
+│  │  Custom Domain: *.example.com, www.example.com            │  │
+│  │  SSL Certificate: ACM (us-east-1) - Auto managed         │  │
 │  │  Price Class: PriceClass_100 (US, Canada, Europe)        │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                             │                                    │
@@ -35,51 +65,19 @@ Dự án này triển khai một static website lên AWS S3 với CloudFront dis
 ┌─────────────────────────────────────────────────────────────────┐
 │                    S3 BUCKET                                    │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Bucket: luckydraw-static-website                        │  │
-│  │  Region: ap-southeast-1                                  │  │
 │  │  Static Website Hosting: Enabled                         │  │
-│  │  • Index Document: index.html                             │  │
-│  │  • Error Document: error.html                             │  │
-│  │  Website Endpoint:                                        │  │
-│  │  luckydraw-static-website.s3-website-                    │  │
-│  │  ap-southeast-1.amazonaws.com                            │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Block Public Access: DISABLED                           │  │
-│  │  Bucket Policy: Public Read (GetObject)                  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Files:                                                   │  │
-│  │  • index.html                                             │  │
-│  │  • error.html                                             │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                    DNS CONFIGURATION                            │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Domain: www.tigerz2h.click                              │  │
-│  │  Type: CNAME                                              │  │
-│  │  Value: djws16y5hcsy4.cloudfront.net                      │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                    ACM CERTIFICATE                               │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Region: us-east-1 (required for CloudFront)             │  │
-│  │  Domain: tigerz2h.click                                   │  │
-│  │  Status: Validated                                        │  │
+│  │  Website Endpoint: bucket.s3-website-region.amazonaws.com│  │
+│  │  Public Access: Enabled (via bucket policy)             │  │
 │  └──────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Flow dữ liệu
+### Data Flow
 
 ```
-User Request
+User Request (HTTPS)
     │
-    ├─→ DNS Query (www.tigerz2h.click)
+    ├─→ DNS Query (www.example.com)
     │       │
     │       └─→ CNAME → CloudFront Domain
     │
@@ -89,301 +87,333 @@ User Request
     │       │   ├─→ Cache Hit → Return cached content
     │       │   └─→ Cache Miss → Forward to Origin
     │       │
-    │       └─→ Origin Request
+    │       └─→ Origin Request (HTTP)
     │               │
     │               └─→ S3 Website Endpoint
     │                       │
-    │                       └─→ Return files (index.html, error.html)
+    │                       └─→ Return files
     │
     └─→ Response to User (HTTPS)
 ```
 
-## 📋 Components
+## 🚀 Quick Start / Bắt đầu nhanh
 
-- **S3 Bucket**: 
-  - Lưu trữ static website files (index.html, error.html)
-  - Static website hosting enabled
-  - Public read access (via bucket policy)
-  - Block public access: DISABLED (cần cho website endpoint)
+### Prerequisites / Yêu cầu
 
-- **CloudFront Distribution**: 
-  - CDN để phân phối nội dung với tốc độ cao
-  - Custom domain: `www.tigerz2h.click`, `*.tigerz2h.click`
-  - SSL/TLS certificate từ ACM
-  - Cache behaviors tối ưu cho static website
-  - Lifecycle protection: prevent_destroy = true
+- [Terraform](https://www.terraform.io/downloads) >= 1.0
+- [AWS CLI](https://aws.amazon.com/cli/) configured
+- AWS Account với quyền tạo S3, CloudFront, ACM
+- Domain name (optional, cho custom domain)
 
-- **ACM Certificate**: 
-  - Certificate có sẵn (region us-east-1)
-  - Được attach vào CloudFront distribution
+### Installation / Cài đặt
 
-- **DNS**: 
-  - CNAME record trỏ domain về CloudFront
-  - Cấu hình thủ công trong DNS provider
+1. **Clone repository**:
+```bash
+git clone https://github.com/your-username/LuckyDrawInfra.git
+cd LuckyDrawInfra
+```
 
-## 🏛️ Cấu trúc Module
+2. **Configure variables**:
+```bash
+cp terraform.tfvars.example terraform.tfvars
+# Chỉnh sửa terraform.tfvars với thông tin của bạn
+```
 
-Dự án này sử dụng **Terraform Module** pattern để tổ chức code:
-- Logic được tách vào module riêng (`modules/s3-cloudfront/`)
-- Root level chỉ gọi module và truyền variables
-- Dễ dàng tái sử dụng và maintain
+3. **Initialize Terraform**:
+```bash
+terraform init
+```
 
-## 📁 Cấu trúc files
+4. **Review plan**:
+```bash
+terraform plan
+```
+
+5. **Deploy**:
+```bash
+terraform apply
+```
+
+## 📋 Components / Các thành phần
+
+### S3 Bucket
+- Static website hosting enabled
+- Public read access (via bucket policy)
+- Block public access: DISABLED (required for website endpoint)
+- Server-side encryption (AES256)
+
+### CloudFront Distribution
+- CDN for global content delivery
+- Custom domain support với aliases
+- SSL/TLS certificate từ ACM (auto-managed)
+- Optimized cache behaviors
+- PriceClass_100 (cost-optimized)
+
+### ACM Certificate
+- Automatic certificate discovery hoặc creation
+- DNS validation support
+- Region: us-east-1 (required for CloudFront)
+- Auto-attach to CloudFront when validated
+
+### DNS Configuration
+- CNAME records để trỏ domain về CloudFront
+- Manual configuration trong DNS provider
+
+## 📁 Project Structure / Cấu trúc dự án
 
 ```
 .
-├── main.tf                    # Root: Gọi module
+├── main.tf                    # Root: Module invocation
 ├── variables.tf               # Root variables
 ├── outputs.tf                 # Root outputs
-├── versions.tf                # Terraform và provider versions
-├── terraform.tfvars           # Giá trị biến (có thể chỉnh sửa)
+├── versions.tf                # Terraform & provider versions
+├── terraform.tfvars           # Variable values (customizable)
 ├── html/                      # Static website files
-│   ├── index.html            # Trang chủ
-│   └── error.html            # Trang lỗi
-├── README.md                  # File này
+│   ├── index.html            # Home page
+│   └── error.html            # Error page
+├── README.md                  # This file
 └── modules/
     └── s3-cloudfront/         # Module: S3 + CloudFront
-        ├── main.tf            # Logic chính của module
-        ├── variables.tf        # Module variables
+        ├── main.tf            # Module logic
+        ├── variables.tf       # Module variables
         ├── outputs.tf         # Module outputs
         ├── versions.tf        # Module provider requirements
         └── README.md          # Module documentation
 ```
 
-## ✅ Lợi ích của Module Pattern
+## ⚙️ Configuration / Cấu hình
 
-✅ **Tái sử dụng**: Module có thể được dùng cho nhiều projects  
-✅ **Tổ chức code**: Logic được tách biệt, dễ maintain  
-✅ **Testing**: Dễ test module độc lập  
-✅ **Best Practice**: Theo chuẩn Terraform module structure
+### Basic Configuration
 
-## 🚀 Cách sử dụng
+Edit `terraform.tfvars`:
 
-### 1. Khởi tạo Terraform
+```hcl
+aws_profile = "your-profile"
+aws_region  = "ap-southeast-1"
 
-```bash
-terraform init
+bucket_name = "my-static-website"
+
+# CloudFront aliases
+cloudfront_aliases = ["www.example.com", "*.example.com"]
+
+# ACM Certificate (optional - auto-discovered if not provided)
+acm_certificate_arn = ""  # Leave empty for auto-discovery
+create_certificate  = true # Set to false if using existing certificate
+
+tags = {
+  Project     = "MyProject"
+  Environment = "Production"
+  ManagedBy   = "Terraform"
+}
 ```
 
-Lệnh này sẽ:
-- Tải về AWS provider
-- Tải về `terraform-aws-modules/s3-bucket/aws` module (được dùng trong module của chúng ta)
-- Khởi tạo local module `./modules/s3-cloudfront`
+### Advanced Configuration
 
-### 2. Xem kế hoạch triển khai
+#### Certificate Management
 
-```bash
-terraform plan
+Module tự động quản lý certificate:
+1. **Auto-discovery**: Tự động tìm certificate đã validate trong ACM
+2. **Auto-creation**: Tạo certificate mới nếu chưa có
+3. **Manual**: Cung cấp certificate ARN trực tiếp
+
+```hcl
+# Option 1: Auto-discovery (recommended)
+create_certificate  = false
+acm_certificate_arn = ""  # Module will find existing validated certificate
+
+# Option 2: Auto-creation
+create_certificate  = true
+certificate_domain  = "*.example.com"
+
+# Option 3: Manual
+create_certificate  = false
+acm_certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT:certificate/xxx"
 ```
 
-Lệnh này sẽ hiển thị những gì Terraform sẽ tạo ra.
+#### Cache Behaviors
 
-### 3. Triển khai infrastructure
+- **HTML files** (`*.html`): No cache (TTL = 0) - always fresh content
+- **Other files**: Cache 1 hour (TTL = 3600s)
 
-```bash
-terraform apply
+## 🔧 Usage Examples / Ví dụ sử dụng
+
+### Example 1: Basic Static Website
+
+```hcl
+module "static_website" {
+  source = "./modules/s3-cloudfront"
+
+  bucket_name = "my-website"
+  cloudfront_aliases = ["www.example.com"]
+  
+  index_html_path = "${path.module}/html/index.html"
+  error_html_path = "${path.module}/html/error.html"
+}
 ```
 
-Nhập `yes` khi được hỏi để xác nhận.
+### Example 2: With Custom Certificate
 
-### 4. Xem thông tin output
+```hcl
+module "static_website" {
+  source = "./modules/s3-cloudfront"
 
-Sau khi triển khai thành công, bạn có thể xem các thông tin quan trọng:
+  bucket_name = "my-website"
+  cloudfront_aliases = ["www.example.com", "example.com"]
+  
+  create_certificate  = false
+  acm_certificate_arn = "arn:aws:acm:us-east-1:123456789:certificate/xxx"
+}
+```
+
+### Example 3: Multiple Environments
+
+```hcl
+# Production
+module "prod" {
+  source = "./modules/s3-cloudfront"
+  bucket_name = "prod-website"
+  cloudfront_aliases = ["www.example.com"]
+}
+
+# Staging
+module "staging" {
+  source = "./modules/s3-cloudfront"
+  bucket_name = "staging-website"
+  cloudfront_aliases = ["staging.example.com"]
+}
+```
+
+## 📊 Outputs / Đầu ra
+
+Sau khi deploy, bạn có thể lấy các thông tin:
 
 ```bash
 terraform output
 ```
 
-Output quan trọng:
-- `cloudfront_domain_name`: Domain name của CloudFront (dùng để tạo CNAME record)
-- `cloudfront_distribution_id`: ID của CloudFront distribution
+**Important outputs**:
+- `cloudfront_domain_name`: CloudFront domain (for DNS CNAME)
+- `cloudfront_distribution_id`: Distribution ID
+- `acm_certificate_arn`: Certificate ARN being used
+- `s3_bucket_id`: S3 bucket ID
 
-### 5. Cấu hình DNS
+## 🔐 DNS Configuration / Cấu hình DNS
 
-Sau khi CloudFront distribution được tạo, bạn cần tạo DNS CNAME record:
+Sau khi deploy, cần cấu hình DNS:
 
-1. Vào DNS provider của bạn (nơi quản lý domain `tigerz2h.click`)
-2. Tạo CNAME record:
-   - **Name/Host**: `www`
-   - **Type**: `CNAME`
-   - **Value/Target**: `<cloudfront_domain_name>` (từ terraform output)
-   - **TTL**: `300` (hoặc mặc định)
-
-3. Đợi DNS propagate (5-30 phút)
-
-## ⚙️ Cấu hình hiện tại
-
-### S3 Bucket
-- **Static Website Hosting**: Enabled
-- **Block Public Access**: DISABLED (cần cho website endpoint)
-- **Bucket Policy**: Public read access (GetObject)
-- **Website Endpoint**: `{bucket-name}.s3-website-{region}.amazonaws.com`
-
-### CloudFront
-- **Origin**: S3 static website hosting endpoint
-- **Origin Type**: Custom origin (HTTP only)
-- **Aliases**: `*.tigerz2h.click`, `www.tigerz2h.click`
-- **SSL Certificate**: ACM certificate (us-east-1)
-- **Price Class**: PriceClass_100 (tối ưu chi phí)
-- **Lifecycle**: prevent_destroy = true (không xóa khi destroy)
-
-### Cache Behaviors
-- **`*.html`**: No cache (TTL = 0) - luôn lấy version mới nhất
-- **Default (`*`)**: Cache (TTL = 3600s) - cache các file khác
-
-## 📝 Lưu ý quan trọng
-
-1. **CloudFront Distribution**: 
-   - Sau khi triển khai, CloudFront distribution có thể mất 15-20 phút để deploy hoàn toàn
-   - Lifecycle protection: Distribution sẽ không bị xóa khi chạy `terraform destroy` (chỉ disable)
-
-2. **ACM Certificate**: 
-   - Certificate phải ở region `us-east-1` để sử dụng với CloudFront
-   - Certificate phải được validate trước khi CloudFront có thể sử dụng
-
-3. **S3 Public Access**: 
-   - Block public access phải được TẮT để website endpoint hoạt động
-   - Bucket policy cho phép public read access (GetObject)
-
-4. **DNS Records**: 
-   - Cần tạo CNAME records trong DNS provider để trỏ domain về CloudFront distribution domain name
-   - DNS có thể mất vài phút đến vài giờ để propagate
-
-## 🔧 Tùy chỉnh
-
-Bạn có thể chỉnh sửa file `terraform.tfvars` để thay đổi:
-- `bucket_name`: Tên S3 bucket
-- `cloudfront_aliases`: List domain names cho CloudFront (ví dụ: `["*.tigerz2h.click", "www.tigerz2h.click"]`)
-- `acm_certificate_arn`: ARN của certificate có sẵn (region us-east-1)
-- `cloudfront_enabled`: Enable/disable CloudFront distribution
-- `aws_region`: AWS region (mặc định: ap-southeast-1)
-- `tags`: Tags cho các resources
-
-## 🧩 Hiểu về Module Structure
-
-### Root Level (Project Root)
-- `main.tf`: Gọi module và truyền variables
-- `variables.tf`: Định nghĩa variables cho project
-- `outputs.tf`: Expose outputs từ module ra ngoài
-
-### Module Level (`modules/s3-cloudfront/`)
-- `main.tf`: Chứa toàn bộ logic tạo resources (S3, CloudFront, policies)
-- `variables.tf`: Định nghĩa inputs mà module nhận
-- `outputs.tf`: Định nghĩa outputs mà module trả về
-- `versions.tf`: Provider requirements với configuration aliases
-
-### Flow hoạt động:
-```
-terraform.tfvars 
-    ↓
-root variables.tf 
-    ↓
-root main.tf 
-    ↓
-module (modules/s3-cloudfront/)
-    ↓
-module outputs 
-    ↓
-root outputs.tf
+1. **Lấy CloudFront domain**:
+```bash
+terraform output cloudfront_domain_name
 ```
 
-### Sử dụng module trong project khác
+2. **Thêm CNAME records** trong DNS provider:
+```
+www.example.com  → CNAME → dxxxxxxxxxxxxx.cloudfront.net
+*.example.com    → CNAME → dxxxxxxxxxxxxx.cloudfront.net
+```
 
-Nếu muốn dùng module này trong project khác:
+3. **Đợi DNS propagation** (5-30 phút)
 
+4. **Thêm aliases vào CloudFront** (nếu chưa có):
 ```hcl
-module "my_website" {
-  source = "../LuckyDrawInfra/modules/s3-cloudfront"
-  
-  providers = {
-    aws           = aws
-    aws.us_east_1 = aws.us_east_1
-  }
-  
-  bucket_name        = "my-bucket"
-  cloudfront_aliases = ["www.example.com"]
-  acm_certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/xxx"
-  index_html_path    = "${path.module}/html/index.html"
-  error_html_path    = "${path.module}/html/error.html"
-  
-  tags = {
-    Project = "MyProject"
-  }
-}
+cloudfront_aliases = ["www.example.com", "*.example.com"]
+terraform apply
 ```
 
-## 🗑️ Xóa infrastructure
+## 🐛 Troubleshooting / Xử lý sự cố
 
-### Xóa tất cả resources
+### CloudFront không hoạt động với custom domain
+
+- ✅ Kiểm tra certificate đã được validate (status = ISSUED)
+- ✅ Đợi CloudFront distribution deploy xong (15-20 phút)
+- ✅ Kiểm tra DNS CNAME records đã trỏ đúng
+- ✅ Kiểm tra aliases đã được thêm vào CloudFront
+
+### Lỗi CNAMEAlreadyExists
+
+DNS records đang trỏ đến CloudFront distribution khác. Cần:
+1. Cập nhật DNS records trỏ về distribution hiện tại
+2. Đợi DNS propagation
+3. Sau đó mới thêm aliases vào CloudFront
+
+### Lỗi AccessDenied
+
+- ✅ Kiểm tra S3 bucket policy cho phép public read
+- ✅ Kiểm tra Block Public Access đã TẮT
+- ✅ Kiểm tra CloudFront origin dùng website endpoint
+
+### Certificate không được attach
+
+- ✅ Certificate phải ở region `us-east-1`
+- ✅ Certificate phải có status = ISSUED
+- ✅ Kiểm tra `acm_certificate_arn` trong terraform.tfvars
+
+## 💰 Cost Estimation / Ước tính chi phí
+
+### AWS Free Tier (12 months)
+- **S3**: 5GB storage + 20,000 GET requests/month
+- **CloudFront**: 1TB data transfer + 10M requests/month
+- **ACM**: Free
+
+### After Free Tier
+- **S3**: ~$0.023/GB storage + $0.0004/1000 requests
+- **CloudFront**: ~$0.085/GB (PriceClass_100)
+- **Total**: < $5/month for small websites
+
+## 🧪 Testing / Kiểm thử
 
 ```bash
+# Validate configuration
+terraform validate
+
+# Format code
+terraform fmt
+
+# Check plan
+terraform plan
+
+# Apply changes
+terraform apply
+```
+
+## 🗑️ Cleanup / Dọn dẹp
+
+```bash
+# Destroy all resources
 terraform destroy
 ```
 
-**Lưu ý**: 
-- CloudFront distribution sẽ **KHÔNG** bị xóa (do `prevent_destroy = true`)
-- CloudFront sẽ chỉ bị **disable** nếu set `cloudfront_enabled = false`
-- Các resources khác (S3, policies) sẽ bị xóa bình thường
+**Note**: CloudFront distribution có thể được protect khỏi destroy (tùy cấu hình).
 
-### Disable CloudFront (không xóa)
+## 📚 Documentation / Tài liệu
 
-1. Sửa `terraform.tfvars`:
-   ```hcl
-   cloudfront_enabled = false
-   ```
+### Module Documentation
+- [Module README](modules/s3-cloudfront/README.md)
 
-2. Chạy:
-   ```bash
-   terraform apply
-   ```
-
-3. Để enable lại:
-   ```hcl
-   cloudfront_enabled = true
-   terraform apply
-   ```
-
-## 🔍 Troubleshooting
-
-### CloudFront không hoạt động với custom domain
-- ✅ Kiểm tra certificate đã được validate chưa (phải ở region us-east-1)
-- ✅ Đợi CloudFront distribution deploy hoàn toàn (15-20 phút)
-- ✅ Kiểm tra DNS CNAME record đã trỏ đúng về CloudFront domain name chưa
-- ✅ Đảm bảo domain name đã được thêm vào CloudFront aliases trong Terraform
-
-### Lỗi AccessDenied khi truy cập
-- ✅ Kiểm tra S3 bucket policy đã cho phép public read access chưa
-- ✅ Kiểm tra Block Public Access đã được TẮT chưa
-- ✅ Kiểm tra CloudFront origin đang dùng website endpoint đúng chưa
-
-### Website trỏ về S3 bucket thay vì CloudFront
-- ✅ Kiểm tra DNS CNAME record đã trỏ về CloudFront domain name chưa
-- ✅ Kiểm tra CloudFront distribution đã có aliases được cấu hình chưa
-- ✅ Đợi CloudFront distribution deploy xong (status = Deployed)
-
-## 💰 Chi phí ước tính
-
-### Free Tier (12 tháng đầu)
-- **S3**: 5GB storage + 20,000 GET requests
-- **CloudFront**: 1TB data transfer + 10M requests
-- **ACM**: Miễn phí
-
-### Sau Free Tier
-- **S3**: ~$0.023/GB storage + $0.0004/1000 requests
-- **CloudFront**: ~$0.085/GB data transfer (PriceClass_100)
-- **Route53**: $0.50/hosted zone/month + $0.40/million queries
-- **ACM**: Miễn phí
-
-**Tổng chi phí ước tính cho website nhỏ**: < $5/tháng (sau Free Tier)
-
-## 📚 Tài liệu tham khảo
-
-- [AWS S3 Static Website Hosting](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html)
+### AWS Documentation
+- [S3 Static Website Hosting](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html)
 - [CloudFront with S3 Origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html)
+- [ACM Certificates](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html)
+
+### Terraform Documentation
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [Terraform Module Structure](https://developer.hashicorp.com/terraform/language/modules)
+- [Terraform Modules](https://developer.hashicorp.com/terraform/language/modules)
+
+## 🤝 Contributing / Đóng góp
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🔍 Keywords / Từ khóa
+
+**English**: Terraform, AWS, S3, CloudFront, Static Website, SSL Certificate, ACM, CDN, Infrastructure as Code, IaC, AWS Certificate Manager, Custom Domain, HTTPS, Website Hosting, Terraform Module
+
+**Tiếng Việt**: Terraform, AWS, S3, CloudFront, Static Website, SSL Certificate, CDN, Infrastructure as Code, IaC, Tự động hóa, Deploy website, Hosting website, Module Terraform
 
 ---
 
-**Tool hỗ trợ**: [Cursor](https://cursor.sh/)  
-**Ngày tạo**: Tháng 11 29, 2025
+**Created with**: [Cursor](https://cursor.sh/)  
+**Last Updated**: November 30, 2025
